@@ -65,19 +65,26 @@ a:hover {
 
 header {
   padding-top: 40px;
-  padding-bottom: 40px;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif; 
+  padding-bottom: 20px;
+  font-family: "Century Gothic", "Helvetica", Helvetica, Arial, serif; 
   background: #2e7bcf url(../images/header-bg.jpg) 0 0 repeat-x;
   border-bottom: solid 1px #275da1;
+  text-align: right;
+  
+}
+header .inner{
+  width: 940px;
+  margin: 0 auto;
+  padding-right:100px;
 }
 
 header h1 {
-  letter-spacing: -1px;
-  font-size: 72px;
+  /*letter-spacing: -1px;*/
+  font-size: 60px;
   color: #fff;
   line-height: 1;
-  margin-bottom: 0.2em;
-  width: 540px;
+  margin-bottom: 0.4em;
+  /*width: 540px;*/
 }
 
 header h2 {
@@ -85,8 +92,25 @@ header h2 {
   color: #9ddcff;
   font-weight: normal;
   line-height: 1.3;
-  width: 540px;
+  /*width: 540px;*/
   letter-spacing: 0;
+}
+
+header h3 {
+  font-size: 16px;
+  color: #fff;
+  font-weight: normal;
+  line-height: 1.3;
+  /*width: 540px;*/
+  letter-spacing: 0;
+  text-align: right;
+}
+header h3 a{
+  color: #fff;
+  text-decoration: underline;
+}
+header h3 a:hover{
+  background-color: #fff;
 }
 
 .inner {
@@ -148,10 +172,10 @@ header a.button {
   top: 0;
   background: transparent url(../images/github-button.png) 0 0 no-repeat;
 }
-aside a.button {
+footer a.download {
   width: 138px;
   padding-left: 64px;
-  display: block;
+  display: inline-block;
   background: transparent url(../images/download-button.png) 0 0 no-repeat;
   margin-bottom: 20px;
   font-size: 21px;
