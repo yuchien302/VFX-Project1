@@ -60,19 +60,14 @@ header p a:hover{
 }
 
 
-.img-overlap{
-  position: relative;
-  height: 327px;
-  width: 327px;
-}
-.img-overlap img {
-  position: absolute;
-  opacity: 0.5;
-}
 
-.img-inline{
-  display: inline-block;
-}
+.table.image-holder th, .table.image-holder td { 
+     border: none; 
+ }
+
+
+
+
 
 
 .gallery > div {
@@ -82,6 +77,20 @@ header p a:hover{
 .gallery img {
   margin-bottom: 7px;
 }
+
+.HDR-content {
+  position: relative;
+}
+
+.HDR-content > div{
+  position: absolute;
+  bottom: 0px;
+  color: #fff;
+  width: 100%;
+  padding-left: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
 
 
 /*

@@ -7,8 +7,10 @@
     <link rel="stylesheet" type="text/css" href="bootstrap-3.1.1-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="bootstrap-3.1.1-dist/css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" type="text/css" href="stylesheets/style.css"/>
-    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+    <script type="text/javascript" src="javascripts/jquery.js"></script>
     <script type="text/javascript" src="bootstrap-3.1.1-dist/js/bootstrap.js"></script>
+    <script type="text/javascript" src="javascripts/handlebar.js"></script>
     <script type="text/javascript" src="javascripts/main.js"></script>
 
 
@@ -16,7 +18,7 @@
   </head>
 
   <body>
-    <a href="https://github.com/raphael0914/VFX-Project1"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
+<!--     <a href="https://github.com/raphael0914/VFX-Project1"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a> -->
     
 
     <header>
@@ -69,138 +71,147 @@
 
             </ul>
 
-            <div class="img-inline">
-                <div class="img-overlap">
-                  <img src="images/1.JPG">
-                  <img src="images/2.JPG">
-                </div>
-              </div>
-              <span>---shift (3, 7)--></span>
-              <div class="img-inline">
-                <div class="img-overlap">
-                  <img src="images/1.JPG">
-                  <img style="top:7px; left:3px;" src="images/2.JPG">
-                </div>
-              </div>
+
+
+            <h4>HOW TO USE</h4>
+            <p>Given two image I0 and I1, can be grey scale, RGB color sceme, uint8 or uint16 images.
+            Use matlab script <code>getShift.m</code> to align I1 to I0.</p>
+
+            <pre>function [dx, dy, sI1] = getShift(I0, I1)
+
+%%%  dx: I1 should move dx pixel along x axis to align with I0.
+%%%  dy: I1 should move dy pixel along x axis to align with I0.
+%%% sI1: shifted images of I1 after align to I0, will put 0 for empty area. 
+            </pre>
+<h4>Result</h4>
+<!--             <div class="table-responsive"><table class="table image-holder"><tr><td><img src="images/getShift.png"></td></tr></table></div> -->
+            <img src="images/getShift.png" class="img-responsive">
+
+            
 
 
           </section>
 
 
 
+
+
+
+
+
           <section>
-            <h1>HDR Gallery</h1>
+<h1>Assemble HDR Image</h1>
+<img src="images/equation/01.png" class="img-responsive">
+<p>This flow chart shows how scene radiance becomes pixel values from both film and digital camera. Thus, to render the image back to high dynamic range, the calculation focus on transferring digital values Z to irradiance map E.</p>
 
-            <section>
-            <h2>01set</h2>
-            <div class="row gallery">
-              
-              <div class="col-md-2">
-              <img src="images/01set_320/IMG_7242.jpg" class="img-responsive" alt="Responsive image">
-              </div>
+<h2>Debevec's method</h2>
 
-              <div class="col-md-2">
-              <img src="images/01set_320/IMG_7243.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/01set_320/IMG_7244.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/01set_320/IMG_7245.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/01set_320/IMG_7246.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/01set_320/IMG_7247.jpg" class="img-responsive" alt="Responsive image">
-              </div>
+<p>In Debevec’s method, g functions for R,G,B channels are recovered by choosing a certain amount of pixels. Considering the change of these pixel values with exposure time(or reciprocal of shutter speed time), the response can be recovered. Once recovered, the irradiance map can be found by using the g functions. </p>
+<img src="images/equation/02.png" class="img-responsive">
+<p>So g functions can be obtained by solving for the below matrix: </p>
+<img src="images/equation/02.png" class="img-responsive">
 
+<p>Our system is build using MATLAB. To choose pixels, we use ginput to build a GUI for pixel selection. To solve for the g function, linear solver is used with operator “ \ ”.</p>
 
-            </div>
-            <div class="row gallery">
-              <div class="col-md-6">
-              <img src="images/01set_16tiff-RAWHDR-pTM.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-            </div>
-            </section>
+<h4>HOW TO USE</h4>
+<p>matlab script <code>devebecHDR.m</code> is the main function for devebec’s method. In the script, <code>getShift.m</code> and <code>gsolve.m</code> function will be called to do alignment and g function solving. Once devebecHDR.m is operated, a window will pop up for pixel selection.
+</p>
 
+<pre>function HDR = devebecHDR(path)
+  
+%%% path: the path of the folder where the image set is
+%%% HDR: the recovered irradiance map of the image set</pre>
 
-            <section>
-            <h2>02set</h2>
-            <div class="row gallery">
-              
-              <div class="col-md-2">
-              <img src="images/02set_320/IMG_7234.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/02set_320/IMG_7235.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/02set_320/IMG_7236.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/02set_320/IMG_7237.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/02set_320/IMG_7238.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/02set_320/IMG_7239.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/02set_320/IMG_7240.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/02set_320/IMG_7241.jpg" class="img-responsive" alt="Responsive image">
-              </div>
+<h4>Result</h4>
+<p>Take  the test set---memorial as an example, if we choose these pixels</p>
+<img src="images/point.png" class="img-responsive">
 
-            </div>
-            <div class="row gallery">
-              <div class="col-md-6">
-              <img src="images/allset_ptm/02set_16tiff-RAWHDR-pTM.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-            </div>
-            </section>
+<p>then we can get R,G,B channel response</p>
+<div class="row">
+  <div class="col-md-4 col-sm-4">
+    <img src="images/red.bmp" class="img-responsive">
+  </div>
+  <div class="col-md-4 col-sm-4">
+<img src="images/green.bmp" class="img-responsive">
+</div>
+<div class="col-md-4 col-sm-4">
+<img src="images/blue.bmp" class="img-responsive">
+</div>
+</div>
 
 
+<p>With photographic tone mapping and Matlab tonemap, we can get the below result</p>
+
+<div class="row gallery">
+        <div class="col-md-4 col-sm-4">
+          <div class="HDR-content">
+          <img src="images/memorial_50_0.5.bmp" class="img-responsive" alt="Responsive image">
+          <div class="caption"><h5>photographic tone mapping<br>(only local operator)</h5></div>
+          </img>
+          </div>
+        </div>
 
 
-            <section>
-            <h2>03set</h2>
-            <div class="row gallery">
-              
-              <div class="col-md-2">
-              <img src="images/03set_320/IMG_7223.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/03set_320/IMG_7226.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/03set_320/IMG_7227.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/03set_320/IMG_7228.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/03set_320/IMG_7229.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-              <div class="col-md-2">
-              <img src="images/03set_320/IMG_7230.jpg" class="img-responsive" alt="Responsive image">
-              </div>
+        <div class="col-md-4 col-sm-4">
+          <div class="HDR-content">
+          <img src="images/memo_glo.jpg" class="img-responsive" alt="Responsive image">
+          <div class="caption"><h5>photographic tone mapping<br>(global+ local operator)</h5></div>
+          </img>
+          </div>
+        </div>
 
-            </div>
-            <div class="row gallery">
-              <div class="col-md-6">
-              <img src="images/allset_ptm/03set_16tiff-RAWHDR-pTM.jpg" class="img-responsive" alt="Responsive image">
-              </div>
-            </div>
-            </section>
+
+        <div class="col-md-4 col-sm-4">
+          <div class="HDR-content">
+          <img src="images/memo_mat_2.bmp" class="img-responsive" alt="Responsive image">
+          <div class="caption"><h5>Matlab tonemap</h5></div>
+          </img>
+          </div>
+        </div>
+</div>
+
+
+          </section>
 
 
 
 
 
 
+
+          <section>
+
+<h1>Tone mapping</h1>
+
+<p>After irradiance map is recovered, the dynamic range is too large for display. So, to produce an image available for printing, tone mapping needs to be done. Although we cannot keep the full range, the image can still be enhanced with visual match. In our project, we implement photographic tone reproduction method and compare it with tonemap in MATLAB.</p>
+
+<h2>Photographic Tone Reproduction</h2>
+<p>To adjust the luminance map, the background luminance is first calculated. Then every pixel is normalized with the background and a key-value. </p>
+<img src="images/equation/05.png" class="img-responsive">
+<p>In the paper of Reinhard, both global and local operator are proposed. However, global operators like</p>
+<img src="images/equation/06.png" class="img-responsive">
+<p>may still lose some details.</p>
+<p>To achieve automatic dodging and burning, the algorithm suggests to adjust the luminance of each pixel with a moderate scale. By using the center-surround method, the contrast is measured by the difference of the luminance map convolving with center and surround kernels.If the contrast is under a certain threshold, the area is considered local and the moderate scale for each pixel is determined.Then the local dodging and burning operator can help enhanced the luminance and modify for lower dynamic range.</p>
+<img src="images/equation/07.png" class="img-responsive">
+
+<h4>HOW TO USE</h4>
+<p>matlab script <code>photoToneMap.m</code> is called for the operation.</p>
+<pre>function LDR = photoToneMap(HDR)
+
+%%% HDR:  the recovered irradiance map of the image set
+%%% LDR:  the adjusted image for printing</pre>
+
+
+
+          </section>
+
+
+
+
+
+          
+          <section id="gallery-area">
+            <!-- <h1>HDR Gallery</h1> -->  
           </section> 
 
 
@@ -238,6 +249,8 @@
       </div>
     </div>
     
+
+
     <footer>
       <a href="https://github.com/raphael0914/VFX-Project1/zipball/master" class="button download">
         <small>Download</small>
@@ -251,5 +264,42 @@
       <p><a href="https://github.com/raphael0914/VFX-Project1"></a> This page is maintained by <a href="https://github.com/raphael0914">raphael0914</a>.</p>
     </footer>
   
+
+
+  <script id="gallery-template" type="text/x-handlebars-template">
+    <h1>HDR Gallery</h1>
+    {{#each .}}
+      <section>
+      <h2>{{set_name}}</h2>
+      <div class="row gallery">
+        
+        {{#each origin_320}}
+        <div class="col-md-2 col-sm-3 col-xs-4">
+        <img src={{.}} class="img-responsive" alt="Responsive image">
+        </div>
+        {{/each}}
+
+      </div>
+      <div class="row gallery">
+        {{#each hdr_1024}}
+        <div class="col-md-6 col-sm-6">
+          <div class="HDR-content">
+          <img src={{src}} class="img-responsive" alt="Responsive image">
+          <div class="caption"><h5>{{method}}</h5></div>
+          </img>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+      </section>
+    {{/each}}
+
+
+
+
+    
+  </script>
+
+
   </body>
 </html>
