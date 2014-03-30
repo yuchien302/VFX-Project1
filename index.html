@@ -17,7 +17,7 @@
     <title>VFX Project 1</title>
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target=".mynavbar">
 <!--     <a href="https://github.com/raphael0914/VFX-Project1"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a> -->
     
 
@@ -32,36 +32,45 @@
     <div class="container">
       <div class="row">
         <div id="main-content" class="col-md-9">
-          <section>
+          <section id="introduction">
             <h1>Introduction</h1>
 
             <p>In this project, we go through multiple steps to assemble an High Dynamic Rang Image.</p>
+            <p>All program in Matlab.</p>
 
 
-            <h2>Requirment and what we done</h2>
+            <h2 id="requirment">Requirment and what we done</h2>
             <p>Although the basic requirment is to assemble HDR in this project is just implement Paul Debevec's method, we have done some extra stuff:</p>
 
             <ol>
             <li>Image alignment using Ward's MTB algorithm.</li>
-            <li>Other HDR creation methods: Robertson's method</li>
+            <li>Other HDR creation methods: Robertson's method and RAW image recover</li>
             <li>Tone mapping using: Photographics Tone Reproduction for Digital Images</li>
             </ol>
 
-            <h2>Taking photographs</h2>
-            <p>We use Canon s95 to take a series of photo under different exposure. We save both .CR2 (RAW) and .JPG file. We use dcraw (http://www.cybercom.net/~dcoffin/dcraw/) to convert .CR2 file to 16-bit .TIFF file through command: “dcraw -4 -T”, which means “Write 16-bit, Don’t automatically brighten the image, Set custom gamma curve to (p=1, ts=1), Write TIFF instead of PPM ”</p>
+            <h2 id="taking-photographs">Taking photographs</h2>
+            <p>We use Canon s95 to take a series of photo under different exposure. We save both .CR2 (RAW) and .JPG file. We use dcraw (<a href="http://www.cybercom.net/~dcoffin/dcraw/">http://www.cybercom.net/~dcoffin/dcraw/</a>) to convert .CR2 file to 16-bit .TIFF file through command: “dcraw -4 -T”, which means “Write 16-bit, Don’t automatically brighten the image, Set custom gamma curve to (p=1, ts=1), Write TIFF instead of PPM ”</p>
 
-            <p>Then we use imread in matlab to read both .JPG and .TIFF file.</p>
+            <p>Then we use <code>imread</code> in matlab to read both .JPG and .TIFF file.</p>
+            <p>Also we use <code>info = imfinfo(filename); info.DigitalCamera.ExposureTime</code> to get the exposure time of .JPG and .TIFF images at runtime.</p>
           </section>
 
 
-
-
-          <section>
+<!-- 
+   ###    ##       ####  ######   ##    ## 
+  ## ##   ##        ##  ##    ##  ###   ## 
+ ##   ##  ##        ##  ##        ####  ## 
+##     ## ##        ##  ##   #### ## ## ## 
+######### ##        ##  ##    ##  ##  #### 
+##     ## ##        ##  ##    ##  ##   ### 
+##     ## ######## ####  ######   ##    ## 
+-->
+          <section id="image-alignment">
 
             <h1>Image Alignment</h1>
             <p>Although we use tripod to take our photos, there are still observable shift between photos. We implement Ward’s Median Threshold Bitmap (MTB) algorithm to recover this shift.</p>
 
-            <h2>MTB algorithm</h2>
+            <h2 id="MTB-algorithm">MTB algorithm</h2>
             <p>According to algorithms, we: </p>
             <ul>
               <li>First, convert all pictures to grayscale.</li>
@@ -73,7 +82,7 @@
 
 
 
-            <h4>HOW TO USE</h4>
+            <h2 id="alignment-usage">Usage</h2>
             <p>Given two image I0 and I1, can be grey scale, RGB color sceme, uint8 or uint16 images.
             Use matlab script <code>getShift.m</code> to align I1 to I0.</p>
 
@@ -83,11 +92,12 @@
 %%%  dy: I1 should move dy pixel along x axis to align with I0.
 %%% sI1: shifted images of I1 after align to I0, will put 0 for empty area. 
             </pre>
-<h4>Result</h4>
+            
+            <h2 id="alignment-result">Result</h2>
 <!--             <div class="table-responsive"><table class="table image-holder"><tr><td><img src="images/getShift.png"></td></tr></table></div> -->
             <img src="images/getShift.png" class="img-responsive">
 
-            
+            <h2 id="alignment-what-we-learn">What We learn</h2>
 
 
           </section>
@@ -97,49 +107,73 @@
 
 
 
-
+<!-- 
+##     ## ########  ########  
+##     ## ##     ## ##     ## 
+##     ## ##     ## ##     ## 
+######### ##     ## ########  
+##     ## ##     ## ##   ##   
+##     ## ##     ## ##    ##  
+##     ## ########  ##     ##  -->
 
           <section>
-<h1>Assemble HDR Image</h1>
+<h1 id="assemble-hdr">Assemble HDR Image</h1>
 <img src="images/equation/01.png" class="img-responsive">
 <p>This flow chart shows how scene radiance becomes pixel values from both film and digital camera. Thus, to render the image back to high dynamic range, the calculation focus on transferring digital values Z to irradiance map E.</p>
 
-<h2>Debevec's method</h2>
+
+<!-- 
+######                                            
+#     # ###### #####  ###### #    # ######  ####  
+#     # #      #    # #      #    # #      #    # 
+#     # #####  #####  #####  #    # #####  #      
+#     # #      #    # #      #    # #      #      
+#     # #      #    # #       #  #  #      #    # 
+######  ###### #####  ######   ##   ######  ####   -->
+
+<h2 id="hdr-debevec-method">Debevec's method</h2>
 
 <p>In Debevec’s method, g functions for R,G,B channels are recovered by choosing a certain amount of pixels. Considering the change of these pixel values with exposure time(or reciprocal of shutter speed time), the response can be recovered. Once recovered, the irradiance map can be found by using the g functions. </p>
-<img src="images/equation/02.png" class="img-responsive">
+<div class="row"><div class="col-md-8"><img src="images/equation/02.png" class="img-responsive"></div></div>
 <p>So g functions can be obtained by solving for the below matrix: </p>
-<img src="images/equation/02.png" class="img-responsive">
+<div class="row"><div class="col-md-5"><img src="images/equation/03.png" class="img-responsive"></div></div>
 
 <p>Our system is build using MATLAB. To choose pixels, we use ginput to build a GUI for pixel selection. To solve for the g function, linear solver is used with operator “ \ ”.</p>
 
-<h4>HOW TO USE</h4>
+
+<h2 id="hdr-debevec-usage">Usage</h2>
 <p>matlab script <code>devebecHDR.m</code> is the main function for devebec’s method. In the script, <code>getShift.m</code> and <code>gsolve.m</code> function will be called to do alignment and g function solving. Once devebecHDR.m is operated, a window will pop up for pixel selection.
 </p>
 
 <pre>function HDR = devebecHDR(path)
-  
+
 %%% path: the path of the folder where the image set is
 %%% HDR: the recovered irradiance map of the image set</pre>
 
-<h4>Result</h4>
+<h2 id="hdr-debevec-result">Result</h2>
 <p>Take  the test set---memorial as an example, if we choose these pixels</p>
-<img src="images/point.png" class="img-responsive">
 
-<p>then we can get R,G,B channel response</p>
 <div class="row">
-  <div class="col-md-4 col-sm-4">
-    <img src="images/red.bmp" class="img-responsive">
+  <div class="col-md-4">
+    <img src="images/point.png" class="img-responsive">
   </div>
-  <div class="col-md-4 col-sm-4">
-<img src="images/green.bmp" class="img-responsive">
-</div>
-<div class="col-md-4 col-sm-4">
-<img src="images/blue.bmp" class="img-responsive">
-</div>
+  <div class="col-md-8">
+    <p>then we can get R,G,B channel response</p>
+    <div class="row">
+      <div class="col-md-4 col-sm-4 col-collapse">
+        <img src="images/red.bmp" class="img-responsive">
+      </div>
+      <div class="col-md-4 col-sm-4 col-collapse">
+    <img src="images/green.bmp" class="img-responsive">
+    </div>
+    <div class="col-md-4 col-sm-4 col-collapse">
+    <img src="images/blue.bmp" class="img-responsive">
+    </div>
+    </div>
+  </div>
 </div>
 
-
+<br>
 <p>With photographic tone mapping and Matlab tonemap, we can get the below result</p>
 
 <div class="row gallery">
@@ -170,6 +204,29 @@
         </div>
 </div>
 
+<!-- 
+######                                    
+#     #  ####  #####  ###### #####  ##### 
+#     # #    # #    # #      #    #   #   
+######  #    # #####  #####  #    #   #   
+#   #   #    # #    # #      #####    #   
+#    #  #    # #    # #      #   #    #   
+#     #  ####  #####  ###### #    #   #    -->
+
+
+
+
+<!-- 
+
+######                
+#     #   ##   #    # 
+#     #  #  #  #    # 
+######  #    # #    # 
+#   #   ###### # ## # 
+#    #  #    # ##  ## 
+#     # #    # #    #  -->
+
+
 
           </section>
 
@@ -177,24 +234,33 @@
 
 
 
-
+<!-- 
+########  #######  ##    ## ######## ##     ##    ###    ########  
+   ##    ##     ## ###   ## ##       ###   ###   ## ##   ##     ## 
+   ##    ##     ## ####  ## ##       #### ####  ##   ##  ##     ## 
+   ##    ##     ## ## ## ## ######   ## ### ## ##     ## ########  
+   ##    ##     ## ##  #### ##       ##     ## ######### ##        
+   ##    ##     ## ##   ### ##       ##     ## ##     ## ##        
+   ##     #######  ##    ## ######## ##     ## ##     ## ##         -->
 
           <section>
 
-<h1>Tone mapping</h1>
+<h1 id="tone-mapping">Tone mapping</h1>
 
 <p>After irradiance map is recovered, the dynamic range is too large for display. So, to produce an image available for printing, tone mapping needs to be done. Although we cannot keep the full range, the image can still be enhanced with visual match. In our project, we implement photographic tone reproduction method and compare it with tonemap in MATLAB.</p>
 
-<h2>Photographic Tone Reproduction</h2>
+<h2 id="tonemap-photographic">Photographic Tone Reproduction</h2>
 <p>To adjust the luminance map, the background luminance is first calculated. Then every pixel is normalized with the background and a key-value. </p>
-<img src="images/equation/05.png" class="img-responsive">
+
+<div class="row"><div class="col-md-4"><img src="images/equation/05.png" class="img-responsive"></div></div>
 <p>In the paper of Reinhard, both global and local operator are proposed. However, global operators like</p>
-<img src="images/equation/06.png" class="img-responsive">
+<div class="row"><div class="col-md-4"><img src="images/equation/06.png" class="img-responsive"></div></div>
 <p>may still lose some details.</p>
 <p>To achieve automatic dodging and burning, the algorithm suggests to adjust the luminance of each pixel with a moderate scale. By using the center-surround method, the contrast is measured by the difference of the luminance map convolving with center and surround kernels.If the contrast is under a certain threshold, the area is considered local and the moderate scale for each pixel is determined.Then the local dodging and burning operator can help enhanced the luminance and modify for lower dynamic range.</p>
-<img src="images/equation/07.png" class="img-responsive">
+<div class="row"><div class="col-md-4"><img src="images/equation/07.png" class="img-responsive"></div></div>
 
-<h4>HOW TO USE</h4>
+
+<h2 id="tonemap-photographic-usage">Usage</h2>
 <p>matlab script <code>photoToneMap.m</code> is called for the operation.</p>
 <pre>function LDR = photoToneMap(HDR)
 
@@ -206,12 +272,33 @@
           </section>
 
 
+<!-- 
+
+ ######      ###    ##       ##       ######## ########  ##    ## 
+##    ##    ## ##   ##       ##       ##       ##     ##  ##  ##  
+##         ##   ##  ##       ##       ##       ##     ##   ####   
+##   #### ##     ## ##       ##       ######   ########     ##    
+##    ##  ######### ##       ##       ##       ##   ##      ##    
+##    ##  ##     ## ##       ##       ##       ##    ##     ##    
+ ######   ##     ## ######## ######## ######## ##     ##    ##    
+ -->
+          <h1>HDR Gallery</h1>
+          <ul class="nav nav-tabs" id="myTab">
+            <li class="active"><a href="#01set" data-toggle="tab">01set</a></li>
+            <li><a href="#02set" data-toggle="tab">02set</a></li>
+            <li><a href="#03set" data-toggle="tab">03set</a></li>
+            <li><a href="#04set" data-toggle="tab">04set</a></li>
+            <li><a href="#05set" data-toggle="tab">05set</a></li>
+            <li><a href="#06set" data-toggle="tab">06set</a></li>
+            <li><a href="#07set" data-toggle="tab">07set</a></li>
+          </ul>
 
 
-
-          
           <section id="gallery-area">
             <!-- <h1>HDR Gallery</h1> -->  
+
+
+
           </section> 
 
 
@@ -221,28 +308,8 @@
         </div>
         
         <div class="col-md-3">
-          <div class="bs-docs-sidebar hidden-print affix-top" role="complementary">
-            <ul class="nav bs-docs-sidenav">
-              
-              <li class="active">
-                <a href="#">Introduction</a>
-                <ul class="nav">
-                  <li class=""><a href="#">Requirment and what we done</a></li>
-                  <li class=""><a href="#">Taking photographs</a></li>
-                </ul>
-              </li>
-
-              <li class="">
-                <a href="#">Image Aliment</a>
-                <ul class="nav">
-                  <li class=""><a href="#">description</a></li>
-                  <li class=""><a href="#">Example</a></li>
-                  <li class=""><a href="#">What We learn</a></li>
-                </ul>
-              </li>
-
-            </ul>
-            <a class="back-to-top" href="#top">Back to top</a>
+          <div class="bs-docs-sidebar hidden-print" id="my-affix"  data-spy="affix" data-offset-top="221" data-offset-bottom="200" role="complementary">
+            
 
           </div>
         </div>
@@ -267,10 +334,12 @@
 
 
   <script id="gallery-template" type="text/x-handlebars-template">
-    <h1>HDR Gallery</h1>
+    <div class="tab-content">
     {{#each .}}
+    
+    <div class="tab-pane" id={{set_name}}>
       <section>
-      <h2>{{set_name}}</h2>
+      <h2> </h2>
       <div class="row gallery">
         
         {{#each origin_320}}
@@ -292,14 +361,28 @@
         {{/each}}
       </div>
       </section>
-    {{/each}}
-
-
-
-
+    </div>
     
+    {{/each}}    
+    </div>
   </script>
 
+  <script id="navbar-template" type="text/x-handlebars-template">
+    <ul class="nav bs-docs-sidenav">
+      {{#each .}}
+      <li class="">
+        <a href={{href}}>{{title}}</a>
+        <ul class="nav">
+          {{#each subnav}}
+          <li class=""><a href={{href}}>{{title}}</a></li>
+          {{/each}}
+        </ul>
+      </li>
+
+      {{/each}}
+    </ul>
+    <a class="back-to-top" href="#top">Back to top</a>   
+  </script>
 
   </body>
 </html>

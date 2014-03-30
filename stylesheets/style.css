@@ -67,9 +67,6 @@ header p a:hover{
 
 
 
-
-
-
 .gallery > div {
   padding: 0 5px;
 }
@@ -91,6 +88,10 @@ header p a:hover{
   background-color: rgba(0, 0, 0, 0.6);
 }
 
+
+.col-collapse {
+  padding: 0;
+}
 
 
 /*
@@ -167,6 +168,12 @@ header p a:hover{
   font-weight: 500;
   padding-left: 28px;
 }
+
+
+
+
+
+
 
 /* Back to top (hidden on mobile) */
 .back-to-top {

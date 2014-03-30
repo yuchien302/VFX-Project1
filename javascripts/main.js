@@ -1,4 +1,92 @@
 $(function(){
+
+  
+  navCollection = [
+    {
+      title: "Introduction",
+      href: "#introduction",
+      subnav: [
+        {
+          title: "Requirment and what we done",
+          href: "#requirment"
+        },
+        {
+          title: "Taking photographs",
+          href: "#taking-photographs"
+        }
+      ]
+    },
+    {
+      title: "Image Alignment",
+      href: "#image-alignment",
+      subnav: [
+        {
+          title: "MTB algorithm",
+          href: "#MTB-algorithm"
+        },
+        {
+          title: "usage",
+          href: "#alignment-usage"
+        },
+        {
+          title: "result",
+          href: "#alignment-result"
+        },
+        {
+          title: "what We learn",
+          href: "#alignment-what-we-learn"
+        }
+      ]
+    },
+    {
+      title: "Assemble HDR Image",
+      href: "#assemble-hdr",
+      subnav: [
+        {
+          title: "Debevec's method",
+          href: "#hdr-debevec-method"
+        },
+        {
+          title: "usage",
+          href: "#hdr-debevec-usage"
+        },
+        {
+          title: "result",
+          href: "#hdr-debevec-result"
+        }
+      ]
+    },
+    {
+      title: "Tone mapping",
+      href: "#tone-mapping",
+      subnav: [
+        {
+          title: "Photographic Tone Reproduction",
+          href: "#tonemap-photographic"
+        },
+        {
+          title: "usage",
+          href: "#tonemap-photographic-usage"
+        }
+      ]
+    },
+    {
+      title: "HDR Gallery",
+      href: "#gallery-area",
+      
+    }
+
+  ]
+
+  source   = $("#navbar-template").html()
+  template = Handlebars.compile(source)
+  $('#my-affix').html(template(navCollection))
+  
+
+
+
+  $('body').scrollspy({ target: '#my-affix' })
+
   method_RAWHDR_pTM = "multiple RAW HDR + photoToneMap";
   gallery =  [
     {
@@ -143,6 +231,14 @@ $(function(){
   source   = $("#gallery-template").html()
   template = Handlebars.compile(source)
   $('#gallery-area').html(template(gallery))
+  
+  $('#myTab a').click(function (e) {
+    e.preventDefault()
+    $(this).tab('show')
+  })
+
+  $(".tab-pane").first().addClass('active')
+
 })
 
 
