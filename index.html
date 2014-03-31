@@ -5,7 +5,7 @@
     
     
     <link rel="stylesheet" type="text/css" href="bootstrap-3.1.1-dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="bootstrap-3.1.1-dist/css/bootstrap-theme.min.css"/>
+    <!-- <link rel="stylesheet" type="text/css" href="bootstrap-3.1.1-dist/css/bootstrap-theme.min.css"/> -->
     <link rel="stylesheet" type="text/css" href="stylesheets/style.css"/>
 
     <script type="text/javascript" src="javascripts/jquery.js"></script>
@@ -35,8 +35,8 @@
           <section id="introduction">
             <h1>Introduction</h1>
 
-            <p>In this project, we go through multiple steps to assemble an High Dynamic Rang Image.</p>
-            <p>All program in Matlab.</p>
+            <p>In this project, we go through multiple steps to assemble a High Dynamic Rang Image.</p>
+            <p>All program implemented in Matlab.</p>
 
 
             <h2 id="requirment">Requirment and what we done</h2>
@@ -71,14 +71,19 @@
             <p>Although we use tripod to take our photos, there are still observable shift between photos. We implement Ward’s Median Threshold Bitmap (MTB) algorithm to recover this shift.</p>
 
             <h2 id="MTB-algorithm">MTB algorithm</h2>
+
             <p>According to algorithms, we: </p>
             <ul>
               <li>First, convert all pictures to grayscale.</li>
               <li>For each picture, compute the median of intensities among all pixels.</li>
               <li>For each picture, all pixels with intensities greater than it's median will be replaced with 1.</li>
               <li>For each picture, all pixels with intensities less than or equal to it's median will be replaced with 0.</li>
-
             </ul>
+            <p>Then we follow the instruction in the slide to search for optimal offset</p>
+
+<div class="row"><div class="col-md-6"><img src="images/equation/r5.png" class="img-responsive"></div></div>
+
+            
 
 
 
@@ -97,8 +102,13 @@
 <!--             <div class="table-responsive"><table class="table image-holder"><tr><td><img src="images/getShift.png"></td></tr></table></div> -->
             <img src="images/getShift.png" class="img-responsive">
 
-            <h2 id="alignment-what-we-learn">What We learn</h2>
-
+            <h2 id="alignment-discussion">Discussion and Limitation</h2>
+            <ul>
+            <li>Although the algorithm run pretty fast and is efficient enough to recover the shift, this algorithm can not recover rotation.</li>
+            <li>Also, when caculate error in small scale, there are possibility misjudge the shift because of low resolution. This misjudge will propogate the error all the way up to final images, causing huge shift.</li>
+            <li>In our implementation, we caculate the error only when both height and width  of images are greater then 6 pixals.</li>
+            <li>When tie accored, we choose the one without any shift.</li>
+            </ul>
 
           </section>
 
@@ -132,6 +142,9 @@
 ######  ###### #####  ######   ##   ######  ####   -->
 
 <h2 id="hdr-debevec-method">Debevec's method</h2>
+<div class="alert alert-info">
+  <h5>Paul E. Debevec, Jitendra Malik, Recovering High Dynamic Range Radiance Maps from Photographs, SIGGRAPH 1997.</h5>
+</div>
 
 <p>In Debevec’s method, g functions for R,G,B channels are recovered by choosing a certain amount of pixels. Considering the change of these pixel values with exposure time(or reciprocal of shutter speed time), the response can be recovered. Once recovered, the irradiance map can be found by using the g functions. </p>
 <div class="row"><div class="col-md-8"><img src="images/equation/02.png" class="img-responsive"></div></div>
@@ -181,7 +194,6 @@
           <div class="HDR-content">
           <img src="images/memorial_50_0.5.bmp" class="img-responsive" alt="Responsive image">
           <div class="caption"><h5>photographic tone mapping<br>(only local operator)</h5></div>
-          </img>
           </div>
         </div>
 
@@ -190,7 +202,6 @@
           <div class="HDR-content">
           <img src="images/memo_glo.jpg" class="img-responsive" alt="Responsive image">
           <div class="caption"><h5>photographic tone mapping<br>(global+ local operator)</h5></div>
-          </img>
           </div>
         </div>
 
@@ -213,8 +224,26 @@
 #    #  #    # #    # #      #   #    #   
 #     #  ####  #####  ###### #    #   #    -->
 
+<h2 id="hdr-robertson-method">Robertson's method</h2>
+<div class="alert alert-info">
+  <h5>Mark Robertson, Sean Borman, Robert Stevenson, Estimation- Theoretic Approach to Dynamic Range Enhancement using Multiple Exposures, Journal of Electronic Imaging 2003.</h5>
+</div>
+<p>Robertson's method is a popular and robust method to assemble HDR images. The main idea of Robertson's method is to iteratively approach to irradiance map E and recover camera response function. The algorithm is on some way similar to Newton's Method.</p>
+<div class="row"><div class="col-md-6"><img src="images/equation/r1.PNG" class="img-responsive"></div></div>
+<div class="row"><div class="col-md-3"><img src="images/equation/r2.PNG" class="img-responsive"></div><div class="col-md-3"><img src="images/equation/r3.PNG" class="img-responsive"></div></div>
 
+<h2 id="hdr-robertson-usage">Usage</h2>
+<p>matlab script <code>robertsonHDR.m</code> is the main function for Robertson's method.
+</p>
 
+<pre>function HDR = robertsonHDR(path, iteration)
+
+%%% path: the path of the folder where the image set is
+%%% iteration: specified the number of iteration you want
+%%%            2~10 is often good enough.
+%%% HDR: the recovered irradiance map of the image set</pre>
+
+<h2 id="hdr-robertson-result">Result</h2>
 
 <!-- 
 
@@ -225,9 +254,47 @@
 #   #   ###### # ## # 
 #    #  #    # ##  ## 
 #     # #    # #    #  -->
+<h2 id="hdr-raw-method">Recover directly from RAW</h2>
+<p>Construct HDR images from multiple RAW file is relatively easy. Since there wasn't any non-linear mapping, we can simply caculate the slope of Exposure - ExposureTime to recover irradiance map E.</p>
+<div class="row"><div class="col-md-5"><img src="images/equation/r4.PNG" class="img-responsive"></div></div>
 
+<h2 id="hdr-raw-usage">Usage</h2>
+<p>matlab script <code>robertsonHDR.m</code> is the main function for Robertson's method.
+</p>
 
+<pre>function HDR = robertsonHDR(path, iteration)
 
+%%% path: the path of the folder where the image set is
+%%% iteration: specified the number of iteration you want
+%%%            2~10 is often good enough.
+%%% HDR: the recovered irradiance map of the image set
+%%%
+%%% Example: HDR = robertsonHDR('./01set-1024/', 3);
+%%%          imshow(tonemap(HDR, 'adjustsaturation', 2));
+</pre>
+<h2 id="hdr-raw-result">Result</h2>
+<div class="row">
+  <div class="col-md-7"><img src="images/rawExp.jpg" class="img-responsive"></div>
+  <div class="col-md-5">
+    <p>red line: Exposure of (200, 105, 2) under different exposure time. slope=40199</p>
+    <p>green line: Exposure of (20, 130, 2) under different exposure time. slope=35450</p>
+    <p>blue line: Exposure of (20, 10, 2) under different exposure time. slope=27774</p>
+  </div>
+</div>
+<div class="row gallery">
+  <div class="col-md-6">
+    <div class="HDR-content">
+      <img src="images/allset_ptm/06set_16tiff-RAWHDR-pTM.jpg" class="img-responsive" alt="Responsive image">
+      <div class="caption"><h5>photographic tone mapping</h5></div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="HDR-content">
+      <img src="images/allset_ptm/06set_16tiff-RAWHDR-mat.jpg" class="img-responsive" alt="Responsive image">
+      <div class="caption"><h5>Matlab tonemap</h5></div>
+    </div>
+  </div></div>
           </section>
 
 
@@ -247,10 +314,14 @@
 
 <h1 id="tone-mapping">Tone mapping</h1>
 
-<p>After irradiance map is recovered, the dynamic range is too large for display. So, to produce an image available for printing, tone mapping needs to be done. Although we cannot keep the full range, the image can still be enhanced with visual match. In our project, we implement photographic tone reproduction method and compare it with tonemap in MATLAB.</p>
+<p>After irradiance map is recovered, the dynamic range is too large for display. So, to produce an image available for printing, tone mapping needs to be done. Although we cannot keep the full range, the image can still be enhanced with visual match. In our project, we implement photographic tone reproduction method and compare it with <code>tonemap</code> in MATLAB.</p>
 
 <h2 id="tonemap-photographic">Photographic Tone Reproduction</h2>
 <p>To adjust the luminance map, the background luminance is first calculated. Then every pixel is normalized with the background and a key-value. </p>
+
+<div class="alert alert-info">
+  <h5>Erik Reinhard, Michael Stark, Peter Shirley, Jim Ferwerda, Photographics Tone Reproduction for Digital Images, SIGGRAPH 2002.</h5>
+</div>
 
 <div class="row"><div class="col-md-4"><img src="images/equation/05.png" class="img-responsive"></div></div>
 <p>In the paper of Reinhard, both global and local operator are proposed. However, global operators like</p>
@@ -265,7 +336,12 @@
 <pre>function LDR = photoToneMap(HDR)
 
 %%% HDR:  the recovered irradiance map of the image set
-%%% LDR:  the adjusted image for printing</pre>
+%%% LDR:  the adjusted image for printing
+
+%%% Example: HDR = hdrread('test.hdr');
+%%%          LDR = photoToneMap(HDR);
+%%%          imshow(LDR);
+</pre>
 
 
 
@@ -355,7 +431,7 @@
           <div class="HDR-content">
           <img src={{src}} class="img-responsive" alt="Responsive image">
           <div class="caption"><h5>{{method}}</h5></div>
-          </img>
+
           </div>
         </div>
         {{/each}}

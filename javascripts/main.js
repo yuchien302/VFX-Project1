@@ -33,8 +33,8 @@ $(function(){
           href: "#alignment-result"
         },
         {
-          title: "what We learn",
-          href: "#alignment-what-we-learn"
+          title: "discussion and limitation",
+          href: "#alignment-discussion"
         }
       ]
     },
@@ -53,6 +53,30 @@ $(function(){
         {
           title: "result",
           href: "#hdr-debevec-result"
+        },
+        {
+          title: "Robertson's method",
+          href: "#hdr-robertson-method"
+        },
+        {
+          title: "usage",
+          href: "#hdr-robertson-usage"
+        },
+        {
+          title: "result",
+          href: "#hdr-robertson-result"
+        },
+        {
+          title: "Recover directly from RAW",
+          href: "#hdr-raw-method"
+        },
+        {
+          title: "usage",
+          href: "#hdr-raw-usage"
+        },
+        {
+          title: "result",
+          href: "#hdr-raw-result"
         }
       ]
     },
