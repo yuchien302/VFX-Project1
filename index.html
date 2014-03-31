@@ -100,7 +100,7 @@
             
             <h2 id="alignment-result">Result</h2>
 <!--             <div class="table-responsive"><table class="table image-holder"><tr><td><img src="images/getShift.png"></td></tr></table></div> -->
-            <img src="images/getShift.png" class="img-responsive">
+            <img src="images/getshift.png" class="img-responsive">
 
             <h2 id="alignment-discussion">Discussion and Limitation</h2>
             <ul>
@@ -229,8 +229,8 @@
   <h5>Mark Robertson, Sean Borman, Robert Stevenson, Estimation- Theoretic Approach to Dynamic Range Enhancement using Multiple Exposures, Journal of Electronic Imaging 2003.</h5>
 </div>
 <p>Robertson's method is a popular and robust method to assemble HDR images. The main idea of Robertson's method is to iteratively approach to irradiance map E and recover camera response function. The algorithm is on some way similar to Newton's Method.</p>
-<div class="row"><div class="col-md-6"><img src="images/equation/r1.PNG" class="img-responsive"></div></div>
-<div class="row"><div class="col-md-3"><img src="images/equation/r2.PNG" class="img-responsive"></div><div class="col-md-3"><img src="images/equation/r3.PNG" class="img-responsive"></div></div>
+<div class="row"><div class="col-md-6"><img src="images/equation/r1.png" class="img-responsive"></div></div>
+<div class="row"><div class="col-md-3"><img src="images/equation/r2.png" class="img-responsive"></div><div class="col-md-3"><img src="images/equation/r3.png" class="img-responsive"></div></div>
 
 <h2 id="hdr-robertson-usage">Usage</h2>
 <p>matlab script <code>robertsonHDR.m</code> is the main function for Robertson's method.
@@ -256,7 +256,7 @@
 #     # #    # #    #  -->
 <h2 id="hdr-raw-method">Recover directly from RAW</h2>
 <p>Construct HDR images from multiple RAW file is relatively easy. Since there wasn't any non-linear mapping, we can simply caculate the slope of Exposure - ExposureTime to recover irradiance map E.</p>
-<div class="row"><div class="col-md-5"><img src="images/equation/r4.PNG" class="img-responsive"></div></div>
+<div class="row"><div class="col-md-5"><img src="images/equation/r4.png" class="img-responsive"></div></div>
 
 <h2 id="hdr-raw-usage">Usage</h2>
 <p>matlab script <code>robertsonHDR.m</code> is the main function for Robertson's method.
@@ -274,7 +274,7 @@
 </pre>
 <h2 id="hdr-raw-result">Result</h2>
 <div class="row">
-  <div class="col-md-7"><img src="images/rawExp.jpg" class="img-responsive"></div>
+  <div class="col-md-7"><img src="images/rawexp.jpg" class="img-responsive"></div>
   <div class="col-md-5">
     <p>red line: Exposure of (200, 105, 2) under different exposure time. slope=40199</p>
     <p>green line: Exposure of (20, 130, 2) under different exposure time. slope=35450</p>
